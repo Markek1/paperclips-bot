@@ -35,7 +35,7 @@ to_track = [
 
 
 class History:
-    MAX_TREND_LENGTH = 15
+    MAX_TREND_LENGTH = 2
 
     def __init__(self, length):
         self.tick_num = 0
@@ -43,9 +43,13 @@ class History:
         self.history = {}
         for data in to_track:
             self.history[data.name] = deque([0])
-        self.trend = {}  # Average change in variables per tick
+
+        self.trend_real = {}  # Average change in variables per tick
         for data in to_track:
-            self.trend[data.name] = 0
+            self.trend_real[data.name] = 0
+        self.trend_percent = {}
+        for data in to_track:
+            self.trend_percent[data.name] = 0
 
     def update(self, driver):
         self.tick_num += 1
@@ -70,7 +74,10 @@ class History:
                     self.history[data.name][-i]
                     - self.history[data.name][-i - 1]
                 )
-            self.trend[data.name] = trend / length
+            self.trend_real[data.name] = trend / length
+            self.trend_percent[data.name] = self.trend_real[data.name] / (
+                self.history[data.name][-length - 1] + 1
+            )
 
     def __getitem__(self, item):
         state = {}

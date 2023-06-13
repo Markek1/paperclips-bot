@@ -21,6 +21,8 @@ class ClipController:
 
 
 class PriceController:
+    PERIOD = 2
+
     def __init__(self, driver):
         self.btnLowerPrice = driver.find_element(By.ID, "btnLowerPrice")
         self.btnRaisePrice = driver.find_element(By.ID, "btnRaisePrice")
@@ -28,21 +30,25 @@ class PriceController:
     def next(self, history: History):
         state = history[-1]
 
-        if (
-            is_valid_btn(self.btnRaisePrice)
-            and 5 * history.trend["clips"] > state["unsold"]
+        if state["unsold"] < 2 * history.trend_real["clips"]:
+            if is_valid_btn(self.btnRaisePrice):
+                self.btnRaisePrice.click()
+        elif (
+            state["unsold"] > 30 * history.trend_real["clips"]
+            and history.trend_percent["unsold"] > -0.02
+        ):
+            if is_valid_btn(self.btnLowerPrice):
+                self.btnLowerPrice.click()
+        elif history.tick_num % self.PERIOD != 0:
+            return
+        elif is_valid_btn(self.btnRaisePrice) and (
+            history.trend_real["unsold"] + history.trend_real["clips"]
+            < history.trend_real["clips"]
         ):
             self.btnRaisePrice.click()
-        elif is_valid_btn(self.btnLowerPrice) and state["unsold"] > abs(
-            20 * history.trend["unsold"]
-        ):
-            self.btnLowerPrice.click()
-        elif (
-            is_valid_btn(self.btnRaisePrice) and history.trend["unsold"] < -0.1
-        ):
-            self.btnRaisePrice.click()
-        elif (
-            is_valid_btn(self.btnLowerPrice) and history.trend["unsold"] > 0.3
+        elif is_valid_btn(self.btnLowerPrice) and (
+            history.trend_real["unsold"] + history.trend_real["clips"]
+            > history.trend_real["clips"] * 0.5
         ):
             self.btnLowerPrice.click()
 
@@ -52,14 +58,12 @@ class WireController:
         self.btnBuyWire = driver.find_element(By.ID, "btnBuyWire")
 
     def next(self, history: History) -> bool:
-        if not is_valid_btn(self.btnBuyWire):
-            return True
-
         state = history[-1]
 
         # If we'll run out of wire in less than 100 ticks
-        if state["wire"] + history.trend["wire"] * 100 <= 0:
-            self.btnBuyWire.click()
+        if state["wire"] + history.trend_real["wire"] * 100 <= 0:
+            if is_valid_btn(self.btnBuyWire):
+                self.btnBuyWire.click()
             return False
         else:
             return True

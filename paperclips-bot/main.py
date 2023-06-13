@@ -14,16 +14,12 @@ btnMakePaperclip = driver.find_element(By.ID, "btnMakePaperclip")
 history = History(10)
 controller = MainController(driver)
 
-driver.execute_script("clips=100000;unsoldClips=100000;")
+# driver.execute_script("clips=10000;unsoldClips=10000;")
 driver.implicitly_wait(0.1)
 
 while True:
-    btnMakePaperclip.click()
-
     history.update(driver)
     controller.next(driver, history)
-
-    time.sleep(0.1)
 
 
 driver.close()
