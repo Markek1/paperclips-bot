@@ -9,8 +9,6 @@ from controllers import MainController
 driver = webdriver.Chrome()
 driver.get("https://www.decisionproblem.com/paperclips/index2.html")
 
-btnMakePaperclip = driver.find_element(By.ID, "btnMakePaperclip")
-
 history = History(10)
 controller = MainController(driver)
 
