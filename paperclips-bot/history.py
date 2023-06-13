@@ -9,29 +9,73 @@ from helpers import clean_num
 
 @dataclass
 class State:
-    paperclips: int
-    funds: int
+    clips: int
+    funds: float
     unsold: int
     wire: int
 
 
+class Data:
+    def __init__(self, name, element_id, type_) -> None:
+        self.name = name
+        self.element_id = element_id
+        self.type = type_
+
+
+to_track = [
+    Data("clips", "clips", int),
+    Data("funds", "funds", float),
+    Data("unsold", "unsoldClips", int),
+    Data("wire", "wire", int),
+    Data("trust", "trust", int),
+    Data("processors", "processors", int),
+    Data("memory", "memory", int),
+    Data("creativity", "creativity", int),
+]
+
+
 class History:
-    def __init__(self, n):
-        self.n = n
-        self.history = deque(maxlen=n)
+    MAX_TREND_LENGTH = 15
+
+    def __init__(self, length):
+        self.tick_num = 0
+        self.length = length
+        self.history = {}
+        for data in to_track:
+            self.history[data.name] = deque([0])
+        self.trend = {}  # Average change in variables per tick
+        for data in to_track:
+            self.trend[data.name] = 0
 
     def update(self, driver):
-        state = State(
-            paperclips=int(
-                clean_num(driver.find_element(By.ID, "clips").text)
-            ),
-            funds=float(clean_num(driver.find_element(By.ID, "funds").text)),
-            unsold=int(
-                clean_num(driver.find_element(By.ID, "unsoldClips").text)
-            ),
-            wire=int(clean_num(driver.find_element(By.ID, "wire").text)),
-        )
-        self.history.append(state)
+        self.tick_num += 1
+
+        for data in to_track:
+            self.history[data.name].append(
+                data.type(
+                    clean_num(driver.find_element(By.ID, data.element_id).text)
+                )
+            )
+
+        for data in to_track:
+            trend = 0
+            length = min(
+                self.MAX_TREND_LENGTH, len(self.history[data.name]) - 1
+            )
+            if length == 0:
+                break
+
+            for i in range(1, length + 1):
+                trend += (
+                    self.history[data.name][-i]
+                    - self.history[data.name][-i - 1]
+                )
+            self.trend[data.name] = trend / length
 
     def __getitem__(self, item):
-        return self.history[item]
+        state = {}
+
+        for data in to_track:
+            state[data.name] = self.history[data.name][item]
+
+        return state

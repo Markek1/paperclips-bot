@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from history import State, History
-from controller import Controller
+from controllers import MainController
 
 driver = webdriver.Chrome()
 driver.get("https://www.decisionproblem.com/paperclips/index2.html")
@@ -12,13 +12,15 @@ driver.get("https://www.decisionproblem.com/paperclips/index2.html")
 btnMakePaperclip = driver.find_element(By.ID, "btnMakePaperclip")
 
 history = History(10)
-controller = Controller(driver)
+controller = MainController(driver)
+
+driver.execute_script("clips=100000;unsoldClips=100000;")
 
 while True:
     btnMakePaperclip.click()
 
     history.update(driver)
-    controller.next(history)
+    controller.next(driver, history)
 
     time.sleep(0.1)
 
