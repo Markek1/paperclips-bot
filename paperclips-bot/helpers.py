@@ -1,4 +1,6 @@
 def clean_num(s: str):
+    if s == "":
+        return "0"
     s = s.strip()
     s = s.replace(",", "")
     s = s.replace(" ", "")

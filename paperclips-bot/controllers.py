@@ -1,10 +1,7 @@
-from dataclasses import dataclass
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from history import State, History
+from history import History
 from helpers import is_valid_btn
 
 
@@ -29,23 +26,24 @@ class PriceController:
         self.btnRaisePrice = driver.find_element(By.ID, "btnRaisePrice")
 
     def next(self, history: History):
-        if history.tick_num % 3 != 0:
-            return
-
-        if not is_valid_btn(self.btnLowerPrice) or not is_valid_btn(
-            self.btnRaisePrice
-        ):
-            return
-
         state = history[-1]
 
-        if history.trend["clips"] > state["unsold"]:
+        if (
+            is_valid_btn(self.btnRaisePrice)
+            and 5 * history.trend["clips"] > state["unsold"]
+        ):
             self.btnRaisePrice.click()
-        elif state["unsold"] > abs(20 * history.trend["unsold"]):
+        elif is_valid_btn(self.btnLowerPrice) and state["unsold"] > abs(
+            20 * history.trend["unsold"]
+        ):
             self.btnLowerPrice.click()
-        elif history.trend["unsold"] < -0.2:
+        elif (
+            is_valid_btn(self.btnRaisePrice) and history.trend["unsold"] < -0.1
+        ):
             self.btnRaisePrice.click()
-        elif history.trend["unsold"] > 0.2:
+        elif (
+            is_valid_btn(self.btnLowerPrice) and history.trend["unsold"] > 0.3
+        ):
             self.btnLowerPrice.click()
 
 
@@ -67,7 +65,6 @@ class WireController:
             return True
 
 
-@dataclass
 class Project:
     def __init__(self, driver, element_id, title):
         self.id = element_id
@@ -79,7 +76,6 @@ class Project:
 
 
 class CompResController:
-
     PROC_MEM_RATIO = 1 / 4
 
     def __init__(self, driver):
@@ -105,7 +101,9 @@ class CompResController:
 
     def next(self, driver, history: History):
         if history.tick_num % 30 == 0:
-            self.update_projects(driver)
+            return
+
+        self.update_projects(driver)
 
         state = history[-1]
 

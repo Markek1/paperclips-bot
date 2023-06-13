@@ -3,7 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from history import State, History
+from history import History
 from controllers import MainController
 
 driver = webdriver.Chrome()
@@ -15,6 +15,7 @@ history = History(10)
 controller = MainController(driver)
 
 driver.execute_script("clips=100000;unsoldClips=100000;")
+driver.implicitly_wait(0.1)
 
 while True:
     btnMakePaperclip.click()
@@ -23,5 +24,6 @@ while True:
     controller.next(driver, history)
 
     time.sleep(0.1)
+
 
 driver.close()
