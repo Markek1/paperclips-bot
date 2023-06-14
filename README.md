@@ -4,3 +4,12 @@
 This script automates the initial stages of the game: manually making clips, setting the correct price based on supply and demand, building autoclippers, distributing trust, buying projects and other tasks
 
 ![example](https://github.com/Markek1/paperclips-bot/blob/main/examples/images/s1.png)
+
+You can run it by first cloning the repo, then installing the dependencies with
+```
+pip install -r requirements.txt
+```
+and then running with
+```
+python3 paperclips-bot/main.py
+```
