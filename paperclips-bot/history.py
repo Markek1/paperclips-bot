@@ -14,7 +14,7 @@ class Data:
         self.type = type_
 
 
-to_track = [
+TO_TRACK = [
     Data("clips", "clips", int),
     Data("funds", "funds", float),
     Data("unsold", "unsoldClips", int),
@@ -36,27 +36,27 @@ class History:
         self.tick_num = 0
         self.length = length
         self.history = {}
-        for data in to_track:
+        for data in TO_TRACK:
             self.history[data.name] = deque([0])
 
         self.trend_real = {}  # Average change in variables per tick
-        for data in to_track:
+        for data in TO_TRACK:
             self.trend_real[data.name] = 0
         self.trend_percent = {}
-        for data in to_track:
+        for data in TO_TRACK:
             self.trend_percent[data.name] = 0
 
     def update(self, driver):
         self.tick_num += 1
 
-        for data in to_track:
+        for data in TO_TRACK:
             self.history[data.name].append(
                 data.type(
                     clean_num(driver.find_element(By.ID, data.element_id).text)
                 )
             )
 
-        for data in to_track:
+        for data in TO_TRACK:
             trend = 0
             length = min(
                 self.MAX_TREND_LENGTH, len(self.history[data.name]) - 1
@@ -75,9 +75,16 @@ class History:
             )
 
     def __getitem__(self, item):
-        state = {}
+        if type(item) == int:
+            state = {}
 
-        for data in to_track:
-            state[data.name] = self.history[data.name][item]
+            for data in TO_TRACK:
+                state[data.name] = self.history[data.name][item]
+
+        if type(item) == str:
+            state = self.history[item]
 
         return state
+
+    def __len__(self):
+        return len(self.history["clips"])
