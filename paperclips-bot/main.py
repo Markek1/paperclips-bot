@@ -8,11 +8,11 @@ from visualizer import Visualizer, VisualizerState
 driver = webdriver.Chrome()
 driver.get("https://www.decisionproblem.com/paperclips/index2.html")
 
-history = History(10)
+history = History(5)
 controller = MainController(driver)
 visualizer = Visualizer()
 
-driver.execute_script("clips=10000;unsoldClips=10000;")
+driver.execute_script("clips=1e15;unsoldClips=1e15;")
 driver.implicitly_wait(0.1)
 
 while True:

@@ -33,7 +33,7 @@ class Visualizer:
         self.screen.addstr("\n")
 
         self.screen.addstr(
-            "-" * (sum(cw) + len(cw) * len("\t".expandtabs())) + "\n"
+            "-" * (sum(cw) + len(cw) * (len("\t".expandtabs()) - 1)) + "\n"
         )
 
         if len(history) > 0:
@@ -48,9 +48,15 @@ class Visualizer:
 
                 try:
                     self.screen.addstr(f"{name}\t".rjust(cw[0]))
-                    self.screen.addstr(f"{float(current):.0f}\t".rjust(cw[1]))
                     self.screen.addstr(
-                        f"{float(trend_real):.0f}\t".rjust(cw[2])
+                        f"{Visualizer.limit_num_str(current, cw[1])}\t".rjust(
+                            cw[1]
+                        )
+                    )
+                    self.screen.addstr(
+                        f"{Visualizer.limit_num_str(trend_real, cw[2])}\t".rjust(
+                            cw[2]
+                        )
                     )
                     self.screen.addstr(
                         f"{(100 * trend_percent):.3f}\n".rjust(cw[3])
@@ -68,3 +74,9 @@ class Visualizer:
         self.screen.keypad(False)
         curses.echo()
         curses.endwin()
+
+    def limit_num_str(num, max_len):
+        if len(str(num)) > max_len:
+            return f"{num:e}"
+        else:
+            return str(num)

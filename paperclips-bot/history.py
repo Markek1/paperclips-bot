@@ -28,9 +28,7 @@ TO_TRACK = [
 
 class History:
     """Keeps track of the current state of variables and
-    calculates the trend over the last MAX_TREND_LENGTH ticks."""
-
-    MAX_TREND_LENGTH = 2
+    calculates the trend over the last self.length ticks."""
 
     def __init__(self, length):
         self.tick_num = 0
@@ -58,9 +56,7 @@ class History:
 
         for data in TO_TRACK:
             trend = 0
-            length = min(
-                self.MAX_TREND_LENGTH, len(self.history[data.name]) - 1
-            )
+            length = min(self.length, len(self.history[data.name]) - 1)
             if length == 0:
                 break
 
