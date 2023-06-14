@@ -6,6 +6,8 @@ from helpers import is_valid_btn
 
 
 class ClipController:
+    """Builds clips and buys auto-clippers."""
+
     def __init__(self, driver):
         self.driver = driver
         self.btnMakePaperclip = driver.find_element(By.ID, "btnMakePaperclip")
@@ -21,6 +23,9 @@ class ClipController:
 
 
 class PriceController:
+    """Tries to keep the price of clips at the most profitable level."""
+
+    # Used to limit the frequency of price changes
     PERIOD = 2
 
     def __init__(self, driver):
@@ -54,13 +59,14 @@ class PriceController:
 
 
 class WireController:
+    """Buys wire and gives a signal to stop spending when we're running out"""
+
     def __init__(self, driver):
         self.btnBuyWire = driver.find_element(By.ID, "btnBuyWire")
 
     def next(self, history: History) -> bool:
         state = history[-1]
 
-        # If we'll run out of wire in less than 100 ticks
         if state["wire"] + history.trend_real["wire"] * 100 <= 0:
             if is_valid_btn(self.btnBuyWire):
                 self.btnBuyWire.click()
@@ -80,6 +86,8 @@ class Project:
 
 
 class CompResController:
+    """Builds processors and memory when trust is available and buys every project it can."""
+
     PROC_MEM_RATIO = 1 / 4
 
     def __init__(self, driver):

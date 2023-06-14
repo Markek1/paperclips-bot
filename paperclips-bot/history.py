@@ -7,14 +7,6 @@ from selenium.webdriver.common.by import By
 from helpers import clean_num
 
 
-@dataclass
-class State:
-    clips: int
-    funds: float
-    unsold: int
-    wire: int
-
-
 class Data:
     def __init__(self, name, element_id, type_) -> None:
         self.name = name
@@ -35,6 +27,9 @@ to_track = [
 
 
 class History:
+    """Keeps track of the current state of variables and
+    calculates the trend over the last MAX_TREND_LENGTH ticks."""
+
     MAX_TREND_LENGTH = 2
 
     def __init__(self, length):
