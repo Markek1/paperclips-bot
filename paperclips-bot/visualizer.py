@@ -68,8 +68,7 @@ class Visualizer:
 
         return VisualizerState.RUN
 
-    def __del__(self):
-        print("Exiting...")
+    def return_terminal_state(self):
         curses.nocbreak()
         self.screen.keypad(False)
         curses.echo()

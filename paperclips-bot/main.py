@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 
 from history import History
 from controllers import MainController
@@ -19,7 +18,7 @@ while True:
     history.update(driver)
     controller.next(driver, history)
     if visualizer.draw(history) == VisualizerState.QUIT:
-        del visualizer
+        visualizer.return_terminal_state()
         break
 
 
