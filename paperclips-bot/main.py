@@ -12,7 +12,7 @@ history = History(5)
 controller = MainController(driver)
 visualizer = Visualizer()
 
-driver.execute_script("clips=1e15;unsoldClips=1e15;")
+# driver.execute_script("clips=1e15;unsoldClips=1e15;funds=1e7;")
 driver.implicitly_wait(0.1)
 
 while True:

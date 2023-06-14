@@ -23,7 +23,8 @@ class ClipController:
 
 
 class PriceController:
-    """Tries to keep the price of clips at the most profitable level."""
+    """Tries to keep the price of clips at the most profitable level.
+    Also buys marketing."""
 
     # Used to limit the frequency of price changes
     PERIOD = 2
@@ -31,9 +32,13 @@ class PriceController:
     def __init__(self, driver):
         self.btnLowerPrice = driver.find_element(By.ID, "btnLowerPrice")
         self.btnRaisePrice = driver.find_element(By.ID, "btnRaisePrice")
+        self.btnMarketing = driver.find_element(By.ID, "btnExpandMarketing")
 
-    def next(self, history: History):
+    def next(self, history: History, can_spend: bool):
         state = history[-1]
+
+        if can_spend and is_valid_btn(self.btnMarketing):
+            self.btnMarketing.click()
 
         if state["unsold"] < 2 * history.trend_real["clips"]:
             if is_valid_btn(self.btnRaisePrice):
@@ -149,6 +154,6 @@ class MainController:
 
     def next(self, driver, history: History):
         self.can_spend = self.wire_controller.next(history)
-        self.price_controller.next(history)
+        self.price_controller.next(history, self.can_spend)
         self.clips_controller.next(history, self.can_spend)
         self.comp_res_controller.next(driver, history)
