@@ -75,7 +75,8 @@ class Visualizer:
         curses.endwin()
 
     def limit_num_str(num, max_len):
-        if len(str(num)) > max_len:
+        str_num = f"{num:.0f}"
+        if len(str_num) > max_len:
             return f"{num:e}"
         else:
-            return str(num)
+            return str_num
